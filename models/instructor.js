@@ -16,5 +16,5 @@ module.exports = (sequelize, DataTypes) => {
 
     Instructor.hasMany(models.Assistant, { onDelete: "cascade" });
   };
-  return Student;
+  return Instructor;
 };
