@@ -1,3 +1,5 @@
+const bcrypt = require("bcryptjs");
+
 module.exports = (sequelize, DataTypes) => {
   const Instructor = sequelize.define("Instructor", {
     userName: {
@@ -17,10 +19,23 @@ module.exports = (sequelize, DataTypes) => {
     },
   });
 
+  Instructor.prototype.validPassword = (password) => {
+    return bcrypt.compareSync(password, this.password);
+  };
+
+  Instructor.addHook("beforeCreate", (user) => {
+    user.password = bcrypt.hashSync(
+      user.password,
+      bcrypt.genSaltSync(10),
+      null
+    );
+  });
+
   Instructor.associate = (models) => {
     Instructor.hasMany(models.Student, { onDelete: "cascade" });
 
     Instructor.hasMany(models.Assistant, { onDelete: "cascade" });
   };
+
   return Instructor;
 };
